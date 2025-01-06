@@ -1,4 +1,3 @@
-chinese_calendar
 lxml
 openai>1.0.0
 pandas
@@ -14,4 +13,3 @@ jupyter_client
 zhdate
 ipykernel
 google-generativeai
-zhipuai

@@ -3,72 +3,29 @@
 import logging
 import re
 import time
-import xml.etree.ElementTree as ET
 from queue import Empty
 from threading import Thread
-from base.func_zhipu import ZhiPu
 
 from wcferry import Wcf, WxMsg
 
-from base.func_bard import BardAssistant
-from base.func_chatglm import ChatGLM
-from base.func_chatgpt import ChatGPT
-from base.func_chengyu import cy
-from base.func_news import News
-from base.func_tigerbot import TigerBot
-from base.func_xinghuo_web import XinghuoWeb
-from configuration import Config
-from constants import ChatType
-from job_mgmt import Job
+from config.configuration import Config
+from func_chatgpt import ChatGPT
 
 __version__ = "39.2.4.0"
 
 
-class Robot(Job):
+class Robot():
     """个性化自己的机器人
     """
 
-    def __init__(self, config: Config, wcf: Wcf, chat_type: int) -> None:
+    def __init__(self, config: Config, wcf: Wcf) -> None:
+        super().__init__()
         self.wcf = wcf
         self.config = config
         self.LOG = logging.getLogger("Robot")
         self.wxid = self.wcf.get_self_wxid()
         self.allContacts = self.getAllContacts()
-
-        if ChatType.is_in_chat_types(chat_type):
-            if chat_type == ChatType.TIGER_BOT.value and TigerBot.value_check(self.config.TIGERBOT):
-                self.chat = TigerBot(self.config.TIGERBOT)
-            elif chat_type == ChatType.CHATGPT.value and ChatGPT.value_check(self.config.CHATGPT):
-                self.chat = ChatGPT(self.config.CHATGPT)
-            elif chat_type == ChatType.XINGHUO_WEB.value and XinghuoWeb.value_check(self.config.XINGHUO_WEB):
-                self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
-            elif chat_type == ChatType.CHATGLM.value and ChatGLM.value_check(self.config.CHATGLM):
-                self.chat = ChatGLM(self.config.CHATGLM)
-            elif chat_type == ChatType.BardAssistant.value and BardAssistant.value_check(self.config.BardAssistant):
-                self.chat = BardAssistant(self.config.BardAssistant)
-            elif chat_type == ChatType.ZhiPu.value and ZhiPu.value_check(self.config.ZhiPu):
-                self.chat = ZhiPu(self.config.ZhiPu)
-            else:
-                self.LOG.warning("未配置模型")
-                self.chat = None
-        else:
-            if TigerBot.value_check(self.config.TIGERBOT):
-                self.chat = TigerBot(self.config.TIGERBOT)
-            elif ChatGPT.value_check(self.config.CHATGPT):
-                self.chat = ChatGPT(self.config.CHATGPT)
-            elif XinghuoWeb.value_check(self.config.XINGHUO_WEB):
-                self.chat = XinghuoWeb(self.config.XINGHUO_WEB)
-            elif ChatGLM.value_check(self.config.CHATGLM):
-                self.chat = ChatGLM(self.config.CHATGLM)
-            elif BardAssistant.value_check(self.config.BardAssistant):
-                self.chat = BardAssistant(self.config.BardAssistant)
-            elif ZhiPu.value_check(self.config.ZhiPu):
-                self.chat = ZhiPu(self.config.ZhiPu)
-            else:
-                self.LOG.warning("未配置模型")
-                self.chat = None
-
-        self.LOG.info(f"已选择: {self.chat}")
+        self.chat = ChatGPT(self.config.CHATGPT)
 
     @staticmethod
     def value_check(args: dict) -> bool:
@@ -83,33 +40,6 @@ class Robot(Job):
         """
         return self.toChitchat(msg)
 
-    def toChengyu(self, msg: WxMsg) -> bool:
-        """
-        处理成语查询/接龙消息
-        :param msg: 微信消息结构
-        :return: 处理状态，`True` 成功，`False` 失败
-        """
-        status = False
-        texts = re.findall(r"^([#|?|？])(.*)$", msg.content)
-        # [('#', '天天向上')]
-        if texts:
-            flag = texts[0][0]
-            text = texts[0][1]
-            if flag == "#":  # 接龙
-                if cy.isChengyu(text):
-                    rsp = cy.getNext(text)
-                    if rsp:
-                        self.sendTextMsg(rsp, msg.roomid)
-                        status = True
-            elif flag in ["?", "？"]:  # 查词
-                if cy.isChengyu(text):
-                    rsp = cy.getMeaning(text)
-                    if rsp:
-                        self.sendTextMsg(rsp, msg.roomid)
-                        status = True
-
-        return status
-
     def toChitchat(self, msg: WxMsg) -> bool:
         """闲聊，接入 ChatGPT
         """
@@ -117,6 +47,7 @@ class Robot(Job):
             rsp = "你@我干嘛？"
         else:  # 接了 ChatGPT，智能回复
             q = re.sub(r"@.*?[\u2005|\s]", "", msg.content).replace(" ", "")
+            q = self.convert_format(q)
             rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
 
         if rsp:
@@ -142,23 +73,13 @@ class Robot(Job):
         # 群聊消息
         if msg.from_group():
             # 如果在群里被 @
-            if msg.roomid not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
+            if msg.roomid not in self.config.GROUPS and 'all_groups' not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
                 return
 
             if msg.is_at(self.wxid):  # 被@
                 self.toAt(msg)
 
-            else:  # 其他消息
-                self.toChengyu(msg)
-
             return  # 处理完群聊信息，后面就不需要处理了
-
-        # 非群聊信息，按消息类型进行处理
-        if msg.type == 37:  # 好友请求
-            self.autoAcceptFriendRequest(msg)
-
-        elif msg.type == 10000:  # 系统信息
-            self.sayHiToNewFriend(msg)
 
         elif msg.type == 0x01:  # 文本消息
             # 让配置加载更灵活，自己可以更新配置。也可以利用定时任务更新。
@@ -177,9 +98,6 @@ class Robot(Job):
             self.LOG.error(e)
 
         return 0
-
-    def enableRecvMsg(self) -> None:
-        self.wcf.enable_recv_msg(self.onMsg)
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
@@ -234,32 +152,21 @@ class Robot(Job):
         保持机器人运行，不让进程退出
         """
         while True:
-            self.runPendingJobs()
             time.sleep(1)
 
-    def autoAcceptFriendRequest(self, msg: WxMsg) -> None:
-        try:
-            xml = ET.fromstring(msg.content)
-            v3 = xml.attrib["encryptusername"]
-            v4 = xml.attrib["ticket"]
-            scene = int(xml.attrib["scene"])
-            self.wcf.accept_new_friend(v3, v4, scene)
 
-        except Exception as e:
-            self.LOG.error(f"同意好友出错：{e}")
+    def convert_format(self, input_str: str):
+        # 分割字符串为上下两部分
+        parts = input_str.split('\n- - - - - - - - - - - - - - -\n')
 
-    def sayHiToNewFriend(self, msg: WxMsg) -> None:
-        nickName = re.findall(r"你已添加了(.*)，现在可以开始聊天了。", msg.content)
-        if nickName:
-            # 添加了好友，更新好友列表
-            self.allContacts[msg.sender] = nickName[0]
-            self.sendTextMsg(f"Hi {nickName[0]}，我自动通过了你的好友请求。", msg.sender)
+        # 从第一部分提取xxx
+        first_part = parts[0].strip()
+        content = first_part.split('：')[1].strip()[:-1]
 
-    def newsReport(self) -> None:
-        receivers = self.config.NEWS
-        if not receivers:
-            return
+        # 获取第二部分的yyy
+        second_part = parts[1].strip()
 
-        news = News().get_important_news()
-        for r in receivers:
-            self.sendTextMsg(news, r)
+        # 组合成新格式
+        result = f"{second_part} --> {content}"
+
+        return result
