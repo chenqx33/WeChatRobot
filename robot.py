@@ -154,19 +154,22 @@ class Robot():
         while True:
             time.sleep(1)
 
+    def convert_format(input_str):
+        if '\n- - - - - - - - - - - - - - -\n' not in input_str:
+            return re.sub(r"@.*?[\u2005|\s]", "", input_str).strip()
 
-    def convert_format(self, input_str: str):
         # 分割字符串为上下两部分
         parts = input_str.split('\n- - - - - - - - - - - - - - -\n')
 
         # 从第一部分提取xxx
-        first_part = parts[0].strip()
+        first_part = re.sub(r"@.*?[\u2005|\s]", "", parts[0]).strip()
         content = first_part.split('：')[1].strip()[:-1]
 
         # 获取第二部分的yyy
-        second_part = parts[1].strip()
+        second_part = re.sub(r"@.*?[\u2005|\s]", "", parts[1]).strip()
 
-        # 组合成新格式
-        result = f"{second_part} --> {content}"
+        if second_part:
+            # 组合成新格式
+            return f"{second_part} --> {content}"
 
-        return result
+        return content
