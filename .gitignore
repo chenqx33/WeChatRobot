@@ -9,4 +9,5 @@ logs/
 *.log
 *.log.*
 venv/
+myeny/
 config/config.yaml

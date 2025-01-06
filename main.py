@@ -11,7 +11,7 @@ from robot import Robot, __version__
 
 def main():
     config = Config()
-    wcf = Wcf(debug=True)
+    wcf = Wcf(debug=False)
 
     def handler(sig, frame):
         wcf.cleanup()  # 退出前清理环境
