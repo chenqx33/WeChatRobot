@@ -6,6 +6,7 @@ import signal
 from wcferry import Wcf
 
 from config.configuration import Config
+from plugin import PluginManager
 from robot import Robot, __version__
 
 
@@ -31,6 +32,8 @@ def main():
     # 让机器人一直跑
     robot.keepRunningAndBlockProcess()
 
-
+def main_test():
+    plugin_manager = PluginManager()
+    print(plugin_manager.get_plugins())
 if __name__ == "__main__":
-    main()
+    main_test()

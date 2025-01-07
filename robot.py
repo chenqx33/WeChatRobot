@@ -10,8 +10,10 @@ from wcferry import Wcf, WxMsg
 
 from config.configuration import Config
 from func_chatgpt import ChatGPT
-
+from plugin import plugin_manager
 __version__ = "39.2.4.0"
+
+from plugin.stage_enum import StageEnum
 
 
 class Robot():
@@ -68,6 +70,11 @@ class Robot():
         receivers = msg.roomid
         self.sendTextMsg(content, receivers, msg.sender)
         """
+        plugin_result = plugin_manager.handle(msg, StageEnum.PRE_PROCESS)
+        if plugin_result.is_end():
+            if plugin_result.result:
+                self.sendTextMsg(plugin_result.result, msg.roomid, msg.sender)
+            return
 
         # 群聊消息
         if msg.from_group():
@@ -88,15 +95,6 @@ class Robot():
                     self.LOG.info("已更新")
             else:
                 self.toChitchat(msg)  # 闲聊
-
-    def onMsg(self, msg: WxMsg) -> int:
-        try:
-            self.LOG.info(msg)  # 打印信息
-            self.processMsg(msg)
-        except Exception as e:
-            self.LOG.error(e)
-
-        return 0
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
