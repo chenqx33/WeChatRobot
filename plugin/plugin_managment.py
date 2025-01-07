@@ -9,18 +9,21 @@ from plugin.stage_enum import StageEnum
 class PluginManager:
     def __init__(self):
         self.plugins = {}
+        self.get_plugins()
 
     def get_plugins(self):
+        import plugin
         for subclass in PluginFather.__subclasses__():
             try:
                 instance = subclass()
                 for action_enum in instance.actions:
-                    if self.plugins[action_enum] is None:
+                    if self.plugins.get(action_enum) is None:
                         self.plugins[action_enum] = []
                     self.plugins[action_enum].append(instance)
             except Exception as e:
                 logging.error(f"plugin {subclass} init failed: {e}")
-        self.plugins.sort(key=lambda x: x.order)
+            for value in self.plugins.values():
+                value.sort(key=lambda x: x.order)
         return self.plugins
 
     def handle(self, msg, stage: StageEnum) -> PluginContext:
