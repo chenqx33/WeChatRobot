@@ -10,13 +10,14 @@ from wcferry import Wcf, WxMsg
 
 from config.configuration import Config
 from config.configuration import get_global_flag
-from config.configuration import set_global_flag
+from plugin.action_enum import ActionEnum
 from func_chatgpt import ChatGPT
 from plugin import plugin_manager
 __version__ = "39.2.4.0"
 
 from plugin.stage_enum import StageEnum
 import traceback
+from plugin.plugin_context import PluginContext
 
 
 class Robot():
@@ -47,10 +48,12 @@ class Robot():
         self.sendTextMsg(content, receivers, msg.sender)
         """
         msg.content = self.convert_format(msg.content)
-        plugin_result = plugin_manager.handle(msg, StageEnum.PRE_PROCESS, wcf)
-        if plugin_result.is_end():
-            if plugin_result.result:
-                self.sendTextMsg(plugin_result.result, msg.roomid, msg.sender)
+        plugin_context = PluginContext(msg, ActionEnum.CONTINUE, "")
+
+        plugin_manager.handle( StageEnum.PRE_PROCESS, wcf, plugin_context)
+        if plugin_context.is_end():
+            if plugin_context.result:
+                self.sendTextMsg(plugin_context.result, msg.roomid, msg.sender)
             return
 
         # 群聊消息
@@ -63,13 +66,14 @@ class Robot():
         else:
             return
 
-        plugin_result = plugin_manager.handle(msg, StageEnum.POST_PROCESS, wcf)
-
         if rsp:
+            plugin_context.result = rsp
+            plugin_manager.handle(msg, StageEnum.POST_PROCESS, plugin_context)
             if msg.from_group():
                 self.sendTextMsg(rsp, msg.roomid, msg.sender)
             else:
                 self.sendTextMsg(rsp, msg.sender)
+
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
