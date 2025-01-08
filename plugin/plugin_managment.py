@@ -22,8 +22,8 @@ class PluginManager:
                     self.plugins[action_enum].append(instance)
             except Exception as e:
                 logging.error(f"plugin {subclass} init failed: {e}")
-            for value in self.plugins.values():
-                value.sort(key=lambda x: x.order)
+        for value in self.plugins.values():
+            value.sort(key=lambda x: x.order)
         return self.plugins
 
     def handle(self, msg, stage: StageEnum, wcf: Wcf) -> PluginContext:

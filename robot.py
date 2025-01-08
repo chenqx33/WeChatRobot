@@ -14,7 +14,7 @@ from plugin import plugin_manager
 __version__ = "39.2.4.0"
 
 from plugin.stage_enum import StageEnum
-
+import traceback
 
 class Robot():
     """个性化自己的机器人
@@ -76,6 +76,7 @@ class Robot():
                     continue  # Empty message
                 except Exception as e:
                     self.LOG.error(f"Receiving message error: {e}")
+                    traceback.print_exc()
 
         self.wcf.enable_receiving_msg()
         Thread(target=innerProcessMsg, name="GetMessage", args=(self.wcf,), daemon=True).start()
@@ -86,6 +87,9 @@ class Robot():
         :param receiver: 接收人wxid或者群id
         :param at_list: 要@的wxid, @所有人的wxid为：notify@all
         """
+        self.LOG.info(f'mock send text: {msg}')
+        if True:
+            return
         # msg 中需要有 @ 名单中一样数量的 @
         ats = ""
         if at_list:
