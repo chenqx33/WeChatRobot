@@ -1,7 +1,7 @@
 from plugin.action_enum import ActionEnum
 from plugin.base_plugin import PluginFather
 import logging
-
+from wcferry import Wcf, WxMsg
 from plugin.plugin_context import PluginContext
 from plugin.stage_enum import StageEnum
 
@@ -26,13 +26,10 @@ class PluginManager:
                 value.sort(key=lambda x: x.order)
         return self.plugins
 
-    def handle(self, msg, stage: StageEnum) -> PluginContext:
+    def handle(self, msg, stage: StageEnum, wcf: Wcf) -> PluginContext:
         for plugin in self.plugins[stage]:
-            plugin_result = plugin.handle(msg)
+            plugin_result = plugin.handle(msg, wcf)
             if plugin_result.action == ActionEnum.CONTINUE:
                 continue
             else:
                 return plugin_result
-
-
-

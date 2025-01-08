@@ -12,15 +12,15 @@ class PluginFather:
         self.admin_plugin = admin_plugin
         self.admins = []
 
-    def handle(self, msg: WxMsg, context: PluginContext) -> PluginContext:
+    def handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
         if self.before(msg):
             return PluginContext(msg, ActionEnum.BREAK, "")
-        result = self.do_handle(msg, context)
+        result = self.do_handle(msg, wcf)
         # after()
 
         return result
 
-    def do_handle(self, msg: WxMsg, context: PluginContext) -> PluginContext:
+    def do_handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
         raise NotImplementedError("This method has not been implemented yet.")
 
     def before(self, msg: WxMsg) -> bool:
