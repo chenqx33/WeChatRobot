@@ -9,16 +9,16 @@ from plugin.plugin_context import PluginContext
 
 class BanPlugin(PluginFather):
     def __init__(self):
-        super().__init__(-1, [StageEnum.PRE_PROCESS])
+        super().__init__(0, [StageEnum.PRE_PROCESS], True)
         self.black_list = []
 
-    def handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
-        if msg.content.startswith("/ban") and msg._is_group:
+    def do_handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
+        if msg.content.startswith("/ban") and msg.from_group():
             need_ban_wxid = self.get_at_wxid_by_xml(msg.xml, wcf)
             self.black_list.extend(need_ban_wxid)
             return PluginContext(msg, ActionEnum.BREAK, "ban success")
 
-        if msg.content.startswith("/unban") and msg._is_group:
+        if msg.content.startswith("/unban") and msg.from_group():
             need_ban_wxid = self.get_at_wxid_by_xml(msg.xml, wcf)
             self.black_list = [x for x in self.black_list if x not in need_ban_wxid]
             return PluginContext(msg, ActionEnum.BREAK, "unban success")

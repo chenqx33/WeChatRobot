@@ -25,42 +25,16 @@ class Robot():
         self.wcf = wcf
         self.config = config
         self.LOG = logging.getLogger("Robot")
-        self.wxid = self.wcf.get_self_wxid()
-        self.allContacts = self.getAllContacts()
         self.chat = ChatGPT(self.config.CHATGPT)
 
-    @staticmethod
-    def value_check(args: dict) -> bool:
-        if args:
-            return all(value is not None for key, value in args.items() if key != 'proxy')
-        return False
 
-    def toAt(self, msg: WxMsg) -> bool:
-        """处理被 @ 消息
-        :param msg: 微信消息结构
-        :return: 处理状态，`True` 成功，`False` 失败
-        """
-        return self.toChitchat(msg)
 
-    def toChitchat(self, msg: WxMsg) -> bool:
+    def toChitchat(self, msg: WxMsg) -> str:
         """闲聊，接入 ChatGPT
         """
-        if not self.chat:  # 没接 ChatGPT，固定回复
-            rsp = "你@我干嘛？"
-        else:  # 接了 ChatGPT，智能回复
-            q = self.convert_format(msg.content)
-            rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
-
-        if rsp:
-            if msg.from_group():
-                self.sendTextMsg(rsp, msg.roomid, msg.sender)
-            else:
-                self.sendTextMsg(rsp, msg.sender)
-
-            return True
-        else:
-            self.LOG.error(f"无法从 ChatGPT 获得答案")
-            return False
+        q = self.convert_format(msg.content)
+        rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
+        return rsp
 
     def processMsg(self, msg: WxMsg) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
@@ -77,24 +51,19 @@ class Robot():
             return
 
         # 群聊消息
-        if msg.from_group():
-            # 如果在群里被 @
-            if msg.roomid not in self.config.GROUPS and 'all_groups' not in self.config.GROUPS:  # 不在配置的响应的群列表里，忽略
-                return
-
-            if msg.is_at(self.wxid):  # 被@
-                self.toAt(msg)
-
-            return  # 处理完群聊信息，后面就不需要处理了
-
-        elif msg.type == 0x01:  # 文本消息
-            # 让配置加载更灵活，自己可以更新配置。也可以利用定时任务更新。
-            if msg.from_self():
-                if msg.content == "^更新$":
-                    self.config.reload()
-                    self.LOG.info("已更新")
+        rsp = ''
+        # 不在配置的响应的群列表里，忽略
+        if msg.from_group() and (msg.roomid not in self.config.GROUPS or 'all_groups' not in self.config.GROUPS):
+            return
+        if msg.type == 0x01:  # 文本消息
+            rsp = self.toChitchat(msg)  # 闲聊
+        else:
+            return
+        if rsp:
+            if msg.from_group():
+                self.sendTextMsg(rsp, msg.roomid, msg.sender)
             else:
-                self.toChitchat(msg)  # 闲聊
+                self.sendTextMsg(rsp, msg.sender)
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
@@ -136,13 +105,7 @@ class Robot():
             self.LOG.info(f"To {receiver}: {ats}\r{msg}")
             self.wcf.send_text(f"{ats}\n\n{msg}", receiver, at_list)
 
-    def getAllContacts(self) -> dict:
-        """
-        获取联系人（包括好友、公众号、服务号、群成员……）
-        格式: {"wxid": "NickName"}
-        """
-        contacts = self.wcf.query_sql("MicroMsg.db", "SELECT UserName, NickName FROM Contact;")
-        return {contact["UserName"]: contact["NickName"] for contact in contacts}
+
 
     def keepRunningAndBlockProcess(self) -> None:
         """

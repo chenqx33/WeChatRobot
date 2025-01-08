@@ -36,4 +36,4 @@ def main_test():
     plugin_manager = PluginManager()
     print(plugin_manager.get_plugins())
 if __name__ == "__main__":
-    main_test()
+    main()
