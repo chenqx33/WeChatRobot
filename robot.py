@@ -16,6 +16,8 @@ __version__ = "39.2.4.0"
 from plugin.stage_enum import StageEnum
 import traceback
 
+global_flag = True
+
 class Robot():
     """个性化自己的机器人
     """
@@ -67,7 +69,7 @@ class Robot():
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
-            while wcf.is_receiving_msg():
+            while wcf.is_receiving_msg() and global_flag:
                 try:
                     msg = wcf.get_msg()
                     self.LOG.info(msg)
