@@ -13,6 +13,7 @@ class PluginFather:
         self.admins = []
 
     def handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
+        logging.info(f'{self.__class__.__name__} start')
         if self.before(msg):
             return PluginContext(msg, ActionEnum.BREAK, "")
         result = self.do_handle(msg, wcf)
@@ -26,6 +27,7 @@ class PluginFather:
     def before(self, msg: WxMsg) -> bool:
         # 权限校验
         if not self.check_permission(msg):
+            logging.info(f'{self.__class__.__name__} no permission')
             return False
         return False
 

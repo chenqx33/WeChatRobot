@@ -92,9 +92,9 @@ class Robot():
         :param receiver: 接收人wxid或者群id
         :param at_list: 要@的wxid, @所有人的wxid为：notify@all
         """
-        self.LOG.info(f'mock send text: {msg}')
-        if True:
-            return
+        # self.LOG.info(f'mock send text: {msg}')
+        # if True:
+        #     return
         # msg 中需要有 @ 名单中一样数量的 @
         ats = ""
         if at_list:
