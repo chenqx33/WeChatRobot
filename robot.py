@@ -52,7 +52,7 @@ class Robot():
         plugin_manager.handle(StageEnum.PRE_PROCESS, wcf, plugin_context)
         if plugin_context.is_end():
             if plugin_context.result:
-                if msg.from_group:
+                if msg.from_group():
                     self.sendTextMsg(plugin_context.result, msg.roomid, msg.sender)
                 else:
                     self.sendTextMsg(plugin_context.result, msg.sender)
