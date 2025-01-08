@@ -13,6 +13,7 @@ from config.configuration import get_global_flag
 from plugin.action_enum import ActionEnum
 from func_chatgpt import ChatGPT
 from plugin import plugin_manager
+import xml.etree.ElementTree as ET
 
 __version__ = "39.2.4.0"
 
@@ -46,7 +47,9 @@ class Robot():
         receivers = msg.roomid
         self.sendTextMsg(content, receivers, msg.sender)
         """
-        msg.content = self.convert_format(msg.content)
+        if msg.type not in [0x01, 49] :  # 文本消息
+            return
+        msg.content = self.convert_format(msg)
         plugin_context = PluginContext(msg, ActionEnum.CONTINUE, "")
 
         plugin_manager.handle(StageEnum.PRE_PROCESS, wcf, plugin_context)
@@ -60,15 +63,13 @@ class Robot():
 
         # 群聊消息
         rsp = ''
-        if msg.type != 0x01:  # 文本消息
-            return
         # 不在配置的响应的群列表里，忽略
 
-        if msg.from_group() and not msg.is_at(wcf.self_wxid) and (msg.roomid not in self.config.GROUPS or 'all_groups' not in self.config.GROUPS):
+        if msg.from_group() and not msg.is_at(wcf.self_wxid) and (
+                msg.roomid not in self.config.GROUPS or 'all_groups' not in self.config.GROUPS):
             return
 
         rsp = self.toChitchat(msg)  # 闲聊
-
 
         if rsp:
             plugin_context.result = rsp
@@ -131,22 +132,24 @@ class Robot():
         while True:
             time.sleep(1)
 
-    def convert_format(self, input_str):
-        if '\n- - - - - - - - - - - - - - -\n' not in input_str:
-            return re.sub(r"@.*?[\u2005|\s]", "", input_str).strip()
+    def convert_format(self, msg: WxMsg) -> str:
+        if msg.type == 0x01:
+            return re.sub(r"@.*?[\u2005|\s]", "", msg.content).strip()
 
-        # 分割字符串为上下两部分
-        parts = input_str.split('\n- - - - - - - - - - - - - - -\n')
+        if msg.type == 49:
+            root = ET.fromstring(msg.xml)
 
-        # 从第一部分提取xxx
-        first_part = re.sub(r"@.*?[\u2005|\s]", "", parts[0]).strip()
-        content = first_part.split('：')[1].strip()[:-1]
+            # 提取title标签内容
+            title = re.sub(r"@.*?[\u2005|\s]", "", root.find('.//title').text).strip()
+            logging.info(f'title: {title}')
+            # 提取content标签内容
+            content = root.find('.//content').text.strip()
+            logging.info(f'content: {content}')
+        else:
+            return msg.content
 
-        # 获取第二部分的yyy
-        second_part = re.sub(r"@.*?[\u2005|\s]", "", parts[1]).strip()
-
-        if second_part:
+        if title:
             # 组合成新格式
-            return f"{second_part} --> {content}"
+            return f"{title} --> {content}"
 
         return content
