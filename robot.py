@@ -60,13 +60,15 @@ class Robot():
 
         # 群聊消息
         rsp = ''
+        if msg.type != 0x01:  # 文本消息
+            return
         # 不在配置的响应的群列表里，忽略
-        if msg.from_group() and (msg.roomid not in self.config.GROUPS and 'all_groups' not in self.config.GROUPS):
+
+        if msg.from_group() and not msg.is_at(wcf.self_wxid) and (msg.roomid not in self.config.GROUPS or 'all_groups' not in self.config.GROUPS):
             return
-        if msg.type == 0x01:  # 文本消息
-            rsp = self.toChitchat(msg)  # 闲聊
-        else:
-            return
+
+        rsp = self.toChitchat(msg)  # 闲聊
+
 
         if rsp:
             plugin_context.result = rsp
