@@ -11,7 +11,7 @@ class PluginFather:
         self.actions = actions
         self.admin_plugin = admin_plugin
 
-        self.admins = config['admins']
+        self.admins = config.ADMINS
 
     def handle(self, plugin_context: PluginContext, wcf: Wcf) -> None:
         logging.info(f'{self.__class__.__name__} start')
