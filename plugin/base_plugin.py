@@ -19,7 +19,7 @@ class PluginFather:
             plugin_context.action = ActionEnum.BREAK
             plugin_context.result = ""
             return
-        self.do_handle(msg, wcf)
+        self.do_handle(plugin_context, wcf)
         # after()
 
 
