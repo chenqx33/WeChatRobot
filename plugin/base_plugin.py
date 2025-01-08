@@ -3,14 +3,15 @@ import logging
 
 from plugin.action_enum import ActionEnum
 from plugin.plugin_context import PluginContext
-
+from config.configuration import config
 
 class PluginFather:
     def __init__(self, order: int, actions: list[ActionEnum], admin_plugin: bool):
         self.order = order
         self.actions = actions
         self.admin_plugin = admin_plugin
-        self.admins = []
+
+        self.admins = config['admins']
 
     def handle(self, plugin_context: PluginContext, wcf: Wcf) -> None:
         logging.info(f'{self.__class__.__name__} start')

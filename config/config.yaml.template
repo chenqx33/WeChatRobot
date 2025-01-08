@@ -41,6 +41,7 @@ logging:
 groups:
   enable: ["all_groups"]  # 允许响应的群 roomId，大概长这样：2xxxxxxxxx3@chatroom
 
+admins: []
 
 chatgpt:  # -----chatgpt配置这行不填-----
   key:  # 填写你 ChatGPT 的 key

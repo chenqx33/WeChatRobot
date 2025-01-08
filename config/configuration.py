@@ -30,6 +30,7 @@ class Config(object):
         self.GROUPS = yconfig["groups"]["enable"]
 
         self.CHATGPT = yconfig.get("chatgpt", {})
+        self.ADMINS = yconfig.get("admins", [])
 
 GLOBAL_FLAG = True
 
@@ -38,3 +39,5 @@ def get_global_flag():
 def set_global_flag(flag):
     global GLOBAL_FLAG
     GLOBAL_FLAG = flag
+
+config = Config()

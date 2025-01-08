@@ -86,23 +86,3 @@ class ChatGPT():
             print("滚动清除微信记录：" + wxid)
             # 删除多余的记录，倒着删，且跳过第一个的系统消息
             del self.conversation_list[wxid][2]
-
-
-if __name__ == "__main__":
-    from config.configuration import Config
-    config = Config().CHATGPT
-    if not config:
-        exit(0)
-
-    chat = ChatGPT(config)
-
-    while True:
-        q = input(">>> ")
-        try:
-            time_start = datetime.now()  # 记录开始时间
-            print(chat.get_answer(q, "wxid"))
-            time_end = datetime.now()  # 记录结束时间
-
-            print(f"{round((time_end - time_start).total_seconds(), 2)}s")  # 计算的时间差为程序的执行时间，单位为秒/s
-        except Exception as e:
-            print(e)
