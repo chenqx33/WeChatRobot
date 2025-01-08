@@ -16,7 +16,7 @@ __version__ = "39.2.4.0"
 from plugin.stage_enum import StageEnum
 import traceback
 
-GLOBAL_FLAG = True
+
 
 class Robot():
     """个性化自己的机器人
@@ -140,8 +140,3 @@ class Robot():
 
         return content
 
-def get_global_flag():
-    return GLOBAL_FLAG
-def set_global_flag(flag):
-    global GLOBAL_FLAG
-    GLOBAL_FLAG = flag

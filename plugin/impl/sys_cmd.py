@@ -5,8 +5,7 @@ from plugin.stage_enum import StageEnum
 from plugin.action_enum import ActionEnum
 
 from plugin.plugin_context import PluginContext
-from robot import get_global_flag
-from robot import set_global_flag
+from config.configuration import set_global_flag
 
 class SystemPlugin(PluginFather):
     def __init__(self):
