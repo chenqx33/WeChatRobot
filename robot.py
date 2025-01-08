@@ -10,6 +10,7 @@ from wcferry import Wcf, WxMsg
 
 from config.configuration import Config
 from config.configuration import get_global_flag
+from config.configuration import set_global_flag
 from func_chatgpt import ChatGPT
 from plugin import plugin_manager
 __version__ = "39.2.4.0"
@@ -69,9 +70,11 @@ class Robot():
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
-            while wcf.is_receiving_msg() and get_global_flag():
+            while wcf.is_receiving_msg():
                 try:
                     msg = wcf.get_msg()
+                    if not get_global_flag() and not msg.content == '/start':
+                        continue
                     self.LOG.info(msg)
                     self.processMsg(msg, wcf)
                 except Empty:
