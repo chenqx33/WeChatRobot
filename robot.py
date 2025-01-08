@@ -9,13 +9,13 @@ from threading import Thread
 from wcferry import Wcf, WxMsg
 
 from config.configuration import Config
+from config.configuration import get_global_flag
 from func_chatgpt import ChatGPT
 from plugin import plugin_manager
 __version__ = "39.2.4.0"
 
 from plugin.stage_enum import StageEnum
 import traceback
-
 
 
 class Robot():
@@ -69,7 +69,7 @@ class Robot():
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
-            while wcf.is_receiving_msg() and GLOBAL_FLAG:
+            while wcf.is_receiving_msg() and get_global_flag():
                 try:
                     msg = wcf.get_msg()
                     self.LOG.info(msg)
@@ -139,4 +139,3 @@ class Robot():
             return f"{second_part} --> {content}"
 
         return content
-
