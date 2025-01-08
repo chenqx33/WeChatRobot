@@ -139,3 +139,9 @@ class Robot():
             return f"{second_part} --> {content}"
 
         return content
+
+def get_global_flag():
+    return GLOBAL_FLAG
+def set_global_flag(flag):
+    global GLOBAL_FLAG
+    GLOBAL_FLAG = flag

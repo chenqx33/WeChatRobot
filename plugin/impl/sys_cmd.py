@@ -5,7 +5,8 @@ from plugin.stage_enum import StageEnum
 from plugin.action_enum import ActionEnum
 
 from plugin.plugin_context import PluginContext
-from robot import GLOBAL_FLAG
+from robot import get_global_flag
+from robot import set_global_flag
 
 class SystemPlugin(PluginFather):
     def __init__(self):
@@ -14,13 +15,11 @@ class SystemPlugin(PluginFather):
 
     def do_handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
         if msg.content.startswith("/stop") and not msg.from_group():
-            global GLOBAL_FLAG
-            GLOBAL_FLAG = False
+            set_global_flag(False)
             return PluginContext(msg, ActionEnum.BREAK, "stop success")
 
         if msg.content.startswith("/start") and not msg.from_group():
-            global GLOBAL_FLAG
-            GLOBAL_FLAG = True
+            set_global_flag(True)
             return PluginContext(msg, ActionEnum.BREAK, "start success")
 
         return PluginContext(msg, ActionEnum.CONTINUE, "")
