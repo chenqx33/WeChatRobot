@@ -33,3 +33,4 @@ class PluginManager:
                 continue
             else:
                 return plugin_result
+        return plugin_result

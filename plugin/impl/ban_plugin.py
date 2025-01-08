@@ -23,7 +23,7 @@ class BanPlugin(PluginFather):
             self.black_list = [x for x in self.black_list if x not in need_ban_wxid]
             return PluginContext(msg, ActionEnum.BREAK, "unban success")
 
-        if self.black_list[msg.sender]:
+        if msg.sender in self.black_list:
             return PluginContext(msg, ActionEnum.BREAK, "")
         return PluginContext(msg, ActionEnum.CONTINUE, "")
 

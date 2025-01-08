@@ -38,6 +38,7 @@ class ChatGPT():
         self.updateMessage(wxid, question, "user")
         rsp = ""
         try:
+            logging.info(f'model messages:{self.conversation_list[wxid]}')
             ret = self.client.chat.completions.create(model=self.model,
                                                       messages=self.conversation_list[wxid],
                                                       temperature=0.2)
