@@ -35,8 +35,7 @@ class Robot():
     def toChitchat(self, msg: WxMsg) -> str:
         """闲聊，接入 ChatGPT
         """
-        q = self.convert_format(msg.content)
-        rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
+        rsp = self.chat.get_answer(msg.content, (msg.roomid if msg.from_group() else msg.sender))
         return rsp
 
     def processMsg(self, msg: WxMsg, wcf: Wcf) -> None:
@@ -47,6 +46,7 @@ class Robot():
         receivers = msg.roomid
         self.sendTextMsg(content, receivers, msg.sender)
         """
+        msg.content = self.convert_format(msg.content)
         plugin_result = plugin_manager.handle(msg, StageEnum.PRE_PROCESS, wcf)
         if plugin_result.is_end():
             if plugin_result.result:
