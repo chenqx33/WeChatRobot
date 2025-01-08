@@ -26,11 +26,10 @@ class PluginManager:
             value.sort(key=lambda x: x.order)
         return self.plugins
 
-    def handle(self, msg, stage: StageEnum, wcf: Wcf) -> PluginContext:
+    def handle(self, stage: StageEnum, wcf: Wcf, plugin_context: PluginContext) -> None:
         for plugin in self.plugins[stage]:
-            plugin_result = plugin.handle(msg, wcf)
-            if plugin_result.action == ActionEnum.CONTINUE:
+            plugin.handle(plugin_context, wcf)
+            if plugin_context.action == ActionEnum.CONTINUE:
                 continue
             else:
-                return plugin_result
-        return plugin_result
+                return

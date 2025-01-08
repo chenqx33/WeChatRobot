@@ -12,13 +12,16 @@ class SystemPlugin(PluginFather):
         super().__init__(-1, [StageEnum.PRE_PROCESS], True)
 
 
-    def do_handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
+    def do_handle(self, plugin_context: PluginContext, wcf: Wcf) -> None:
+        msg = plugin_context.msg
         if msg.content.startswith("/stop") and not msg.from_group():
             set_global_flag(False)
-            return PluginContext(msg, ActionEnum.BREAK, "stop success")
+            plugin_context.action = ActionEnum.BREAK
+            plugin_context.result = "stop success"
+            return
 
         if msg.content.startswith("/start") and not msg.from_group():
             set_global_flag(True)
-            return PluginContext(msg, ActionEnum.BREAK, "start success")
-
-        return PluginContext(msg, ActionEnum.CONTINUE, "")
+            plugin_context.action = ActionEnum.BREAK
+            plugin_context.result = "start success"
+            return

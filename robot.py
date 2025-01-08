@@ -62,6 +62,9 @@ class Robot():
             rsp = self.toChitchat(msg)  # 闲聊
         else:
             return
+
+        plugin_result = plugin_manager.handle(msg, StageEnum.POST_PROCESS, wcf)
+
         if rsp:
             if msg.from_group():
                 self.sendTextMsg(rsp, msg.roomid, msg.sender)

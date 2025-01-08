@@ -12,16 +12,18 @@ class PluginFather:
         self.admin_plugin = admin_plugin
         self.admins = []
 
-    def handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
+    def handle(self, plugin_context: PluginContext, wcf: Wcf) -> None:
         logging.info(f'{self.__class__.__name__} start')
+        msg = plugin_context.msg
         if self.before(msg):
-            return PluginContext(msg, ActionEnum.BREAK, "")
-        result = self.do_handle(msg, wcf)
+            plugin_context.action = ActionEnum.BREAK
+            plugin_context.result = ""
+            return
+        self.do_handle(msg, wcf)
         # after()
 
-        return result
 
-    def do_handle(self, msg: WxMsg, wcf: Wcf) -> PluginContext:
+    def do_handle(self, plugin_context: PluginContext, wcf: Wcf) -> None:
         raise NotImplementedError("This method has not been implemented yet.")
 
     def before(self, msg: WxMsg) -> bool:
