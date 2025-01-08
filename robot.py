@@ -61,7 +61,7 @@ class Robot():
         # 群聊消息
         rsp = ''
         # 不在配置的响应的群列表里，忽略
-        if msg.from_group() and (msg.roomid not in self.config.GROUPS or 'all_groups' not in self.config.GROUPS):
+        if msg.from_group() and (msg.roomid not in self.config.GROUPS and 'all_groups' not in self.config.GROUPS):
             return
         if msg.type == 0x01:  # 文本消息
             rsp = self.toChitchat(msg)  # 闲聊

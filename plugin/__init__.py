@@ -16,7 +16,7 @@ def import_submodules(package, recursive=False):
             submodules.extend(import_submodules(submodule))
     return submodules
 
-import_submodules(importlib.import_module('impl', package='.impl'))
+import_submodules(importlib.import_module('plugin.impl'))
 
 
 # 其他插件模块...

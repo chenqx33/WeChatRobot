@@ -1,6 +1,6 @@
 from wcferry import Wcf, WxMsg
 import logging
-
+import traceback
 from plugin.action_enum import ActionEnum
 from plugin.plugin_context import PluginContext
 from config.configuration import config
@@ -20,7 +20,11 @@ class PluginFather:
             plugin_context.action = ActionEnum.BREAK
             plugin_context.result = ""
             return
-        self.do_handle(plugin_context, wcf)
+        try:
+            self.do_handle(plugin_context, wcf)
+        except Exception as e:
+            logging.error(f"Receiving message error: {e}")
+            traceback.print_exc()
         # after()
 
 

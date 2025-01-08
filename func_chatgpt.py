@@ -60,7 +60,7 @@ class ChatGPT():
     def updateMessage(self, wxid: str, question: str, role: str) -> None:
         now_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-        time_mk = "当需要回答时间时请直接参考回复:"
+        time_mk = "当前时间:"
         # 初始化聊天记录,组装系统信息
         if wxid not in self.conversation_list.keys():
             question_ = [
