@@ -36,7 +36,7 @@ class Robot():
         rsp = self.chat.get_answer(q, (msg.roomid if msg.from_group() else msg.sender))
         return rsp
 
-    def processMsg(self, msg: WxMsg) -> None:
+    def processMsg(self, msg: WxMsg, wcf: Wcf) -> None:
         """当接收到消息的时候，会调用本方法。如果不实现本方法，则打印原始消息。
         此处可进行自定义发送的内容,如通过 msg.content 关键字自动获取当前天气信息，并发送到对应的群组@发送者
         群号：msg.roomid  微信ID：msg.sender  消息内容：msg.content
@@ -44,7 +44,7 @@ class Robot():
         receivers = msg.roomid
         self.sendTextMsg(content, receivers, msg.sender)
         """
-        plugin_result = plugin_manager.handle(msg, StageEnum.PRE_PROCESS)
+        plugin_result = plugin_manager.handle(msg, StageEnum.PRE_PROCESS, wcf)
         if plugin_result.is_end():
             if plugin_result.result:
                 self.sendTextMsg(plugin_result.result, msg.roomid, msg.sender)
@@ -71,7 +71,7 @@ class Robot():
                 try:
                     msg = wcf.get_msg()
                     self.LOG.info(msg)
-                    self.processMsg(msg)
+                    self.processMsg(msg, wcf)
                 except Empty:
                     continue  # Empty message
                 except Exception as e:
