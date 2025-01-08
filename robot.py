@@ -13,6 +13,7 @@ from config.configuration import get_global_flag
 from plugin.action_enum import ActionEnum
 from func_chatgpt import ChatGPT
 from plugin import plugin_manager
+
 __version__ = "39.2.4.0"
 
 from plugin.stage_enum import StageEnum
@@ -31,8 +32,6 @@ class Robot():
         self.LOG = logging.getLogger("Robot")
         self.chat = ChatGPT(self.config.CHATGPT)
 
-
-
     def toChitchat(self, msg: WxMsg) -> str:
         """闲聊，接入 ChatGPT
         """
@@ -50,7 +49,7 @@ class Robot():
         msg.content = self.convert_format(msg.content)
         plugin_context = PluginContext(msg, ActionEnum.CONTINUE, "")
 
-        plugin_manager.handle( StageEnum.PRE_PROCESS, wcf, plugin_context)
+        plugin_manager.handle(StageEnum.PRE_PROCESS, wcf, plugin_context)
         if plugin_context.is_end():
             if plugin_context.result:
                 self.sendTextMsg(plugin_context.result, msg.roomid, msg.sender)
@@ -68,12 +67,11 @@ class Robot():
 
         if rsp:
             plugin_context.result = rsp
-            plugin_manager.handle(msg, StageEnum.POST_PROCESS, plugin_context)
+            plugin_manager.handle(StageEnum.POST_PROCESS, wcf, plugin_context)
             if msg.from_group():
                 self.sendTextMsg(rsp, msg.roomid, msg.sender)
             else:
                 self.sendTextMsg(rsp, msg.sender)
-
 
     def enableReceivingMsg(self) -> None:
         def innerProcessMsg(wcf: Wcf):
@@ -120,8 +118,6 @@ class Robot():
         else:
             self.LOG.info(f"To {receiver}: {ats}\r{msg}")
             self.wcf.send_text(f"{ats}\n\n{msg}", receiver, at_list)
-
-
 
     def keepRunningAndBlockProcess(self) -> None:
         """
