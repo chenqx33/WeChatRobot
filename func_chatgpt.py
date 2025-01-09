@@ -70,7 +70,7 @@ class ChatGPT():
             self.conversation_list[wxid] = question_
 
         # 当前问题
-        for query_item in question.split(" --> "):
+        for query_item in question.split(" --> ")[::-1]:
             content_question_ = {"role": role, "content": query_item}
             self.conversation_list[wxid].append(content_question_)
 

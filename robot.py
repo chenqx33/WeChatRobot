@@ -87,6 +87,9 @@ class Robot():
                     if not get_global_flag() and not msg.content == '/start':
                         continue
                     self.LOG.info(msg)
+                    self.LOG.info(f'type: {msg.type}')
+                    self.LOG.info(f'content: {msg.content}')
+                    self.LOG.info(f'xml: {msg.xml}')
                     self.processMsg(msg, wcf)
                 except Empty:
                     continue  # Empty message
@@ -137,7 +140,7 @@ class Robot():
             return re.sub(r"@.*?[\u2005|\s]", "", msg.content).strip()
 
         if msg.type == 49:
-            root = ET.fromstring(msg.xml)
+            root = ET.fromstring(msg.content)
 
             # 提取title标签内容
             title = re.sub(r"@.*?[\u2005|\s]", "", root.find('.//title').text).strip()
