@@ -86,3 +86,7 @@ class ChatGPT():
             print("滚动清除微信记录：" + wxid)
             # 删除多余的记录，倒着删，且跳过第一个的系统消息
             del self.conversation_list[wxid][2]
+
+    def clean_conversation(self, wxid: str) -> None:
+        if wxid in self.conversation_list.keys():
+            del self.conversation_list[wxid]

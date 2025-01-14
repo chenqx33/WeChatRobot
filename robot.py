@@ -50,7 +50,7 @@ class Robot():
         if msg.type not in [0x01, 49] :  # 文本消息
             return
         msg.content = self.convert_format(msg)
-        plugin_context = PluginContext(msg, ActionEnum.CONTINUE, "")
+        plugin_context = PluginContext(msg, ActionEnum.CONTINUE, "", self.chat)
 
         plugin_manager.handle(StageEnum.PRE_PROCESS, wcf, plugin_context)
         if plugin_context.is_end():

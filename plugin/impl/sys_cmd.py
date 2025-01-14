@@ -25,3 +25,10 @@ class SystemPlugin(PluginFather):
             plugin_context.action = ActionEnum.BREAK
             plugin_context.result = "start success"
             return
+
+        if msg.content.startswith("/clean"):
+            plugin_context.chat.clean_conversation(msg.roomid if msg.from_group() else msg.sender)
+
+            plugin_context.action = ActionEnum.BREAK
+            plugin_context.result = "clean success"
+            return
