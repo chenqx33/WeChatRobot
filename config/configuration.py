@@ -30,6 +30,7 @@ class Config(object):
         self.GROUPS = yconfig["groups"]["enable"]
 
         self.CHATGPT = yconfig.get("chatgpt", {})
+        self.COZE = yconfig.get("coze", {})
         self.ADMINS = yconfig.get("admins", [])
 
 GLOBAL_FLAG = True

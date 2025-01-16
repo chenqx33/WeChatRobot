@@ -33,7 +33,7 @@ class Robot():
         self.config = config
         self.LOG = logging.getLogger("Robot")
         # self.chat = ChatGPT(self.config.CHATGPT)
-        self.chat = ChatGPT(self.config.CHATGPT)
+        self.chat = CozeBot(self.config.COZE)
 
     def toChitchat(self, msg: WxMsg) -> str:
         """闲聊，接入 ChatGPT
