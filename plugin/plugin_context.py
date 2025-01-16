@@ -1,12 +1,10 @@
-import logging
 from wcferry import WxMsg
 
-from plugin.stage_enum import StageEnum
 from plugin.action_enum import ActionEnum
-from func_chatgpt import ChatGPT
+from model.func_base import BaseBot
 
 class PluginContext(object):
-    def __init__(self, msg: WxMsg, action: ActionEnum, result: str, chat: ChatGPT):
+    def __init__(self, msg: WxMsg, action: ActionEnum, result: str, chat: BaseBot):
         self.msg = msg
         self.action = action
         self.result = result

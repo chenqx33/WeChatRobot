@@ -7,14 +7,16 @@ from datetime import datetime
 import httpx
 from openai import APIConnectionError, APIError, AuthenticationError, OpenAI
 
+from func_base import BaseBot
 
-class ChatGPT():
+
+class ChatGPT(BaseBot):
     def __init__(self, conf: dict) -> None:
         key = conf.get("key")
         api = conf.get("api")
         proxy = conf.get("proxy")
         prompt = conf.get("prompt")
-        self.model = conf.get("model", "gpt-3.5-turbo")
+        self.model = conf.get("", "gpt-3.5-turbo")
         self.LOG = logging.getLogger("ChatGPT")
         if proxy:
             self.client = OpenAI(api_key=key, base_url=api, http_client=httpx.Client(proxy=proxy))
