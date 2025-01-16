@@ -30,7 +30,7 @@ class CozeBot(BaseBot):
             logging.info(f'model messages:{self.conversation_list[wxid]}')
             for event in self.coze.chat.stream(
                     bot_id=self.bot_id, user_id=user_id,
-                    additional_messages=[Message.build_user_question_text("现在中科金财的股价")]
+                    additional_messages=[Message.build_user_question_text(question)]
             ):
                 if event.event == ChatEventType.CONVERSATION_MESSAGE_DELTA:
                     message = event.message
