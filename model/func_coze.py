@@ -5,7 +5,7 @@ import logging
 
 from cozepy import COZE_CN_BASE_URL
 
-from func_base import BaseBot
+from model.func_base import BaseBot
 
 coze_api_base = COZE_CN_BASE_URL
 

@@ -7,7 +7,7 @@ from datetime import datetime
 import httpx
 from openai import APIConnectionError, APIError, AuthenticationError, OpenAI
 
-from func_base import BaseBot
+from model.func_base import BaseBot
 
 
 class ChatGPT(BaseBot):
