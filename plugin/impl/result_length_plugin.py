@@ -14,6 +14,8 @@ class ResultLengthPlugin(PluginFather):
 
     def do_handle(self, plugin_context: PluginContext, wcf: Wcf) -> None:
         if plugin_context.result and isinstance(plugin_context.result, str):
+            if ' ' in plugin_context.msg.content:
+                return
             if len(plugin_context.result) > self.max_length:
                 logging.info(f'Result too long ({len(plugin_context.result)} chars), truncating to {self.max_length} chars')
                 plugin_context.result = plugin_context.result[:self.max_length] + '...'
