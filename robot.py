@@ -76,6 +76,7 @@ class Robot():
         if rsp:
             plugin_context.result = rsp
             plugin_manager.handle(StageEnum.POST_PROCESS, wcf, plugin_context)
+            rsp = plugin_context.result
             if msg.from_group():
                 self.sendTextMsg(rsp, msg.roomid, msg.sender)
             else:
