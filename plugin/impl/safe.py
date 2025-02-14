@@ -15,4 +15,4 @@ class SafePlugin(PluginFather):
 
 
     def do_handle(self, plugin_context: PluginContext, wcf: Wcf) -> None:
-        time.sleep(random.uniform(2, 5))
+        time.sleep(random.uniform(1, 3))

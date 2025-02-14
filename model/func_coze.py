@@ -35,6 +35,7 @@ class CozeBot(BaseBot):
                 if event.event == ChatEventType.CONVERSATION_MESSAGE_DELTA:
                     message = event.message
                     rsp += message.content
+            rsp = rsp.strip()
             self.updateMessage(wxid, rsp, "assistant")
         except Exception as e0:
             self.LOG.error(f"发生未知错误：{str(e0)}")
