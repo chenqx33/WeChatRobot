@@ -49,3 +49,11 @@ chatgpt:  # -----chatgpt配置这行不填-----
   model: gpt-3.5-turbo
   prompt: 你是智能聊天机器人，你叫 wcferry，你的创造者是Tyler  # 根据需要对角色进行设定
 
+coze:
+  bot_id:
+  coze_api_token:
+
+ark:
+  api: https://ark.cn-beijing.volces.com/api/v3/chat/completions
+  model: deepseek-r1-250120
+  prompt: 你是智能聊天机器人，你叫 wcferry，你的创造者是Tyler  # 根据需要对角色进行设定

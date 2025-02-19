@@ -31,6 +31,7 @@ class Config(object):
 
         self.CHATGPT = yconfig.get("chatgpt", {})
         self.COZE = yconfig.get("coze", {})
+        self.ARK = yconfig.get("ark", {})
         self.ADMINS = yconfig.get("admins", [])
 
 GLOBAL_FLAG = True

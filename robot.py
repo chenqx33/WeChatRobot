@@ -13,6 +13,7 @@ from config.configuration import get_global_flag
 from plugin.action_enum import ActionEnum
 from model.func_chatgpt import ChatGPT
 from model.func_coze import CozeBot
+from model.func_ark import ARKBot
 from plugin import plugin_manager
 import xml.etree.ElementTree as ET
 
@@ -33,7 +34,8 @@ class Robot():
         self.config = config
         self.LOG = logging.getLogger("Robot")
         # self.chat = ChatGPT(self.config.CHATGPT)
-        self.chat = CozeBot(self.config.COZE)
+        # self.chat = CozeBot(self.config.COZE)
+        self.chat = ARKBot(self.config.ARK)
 
     def toChitchat(self, msg: WxMsg) -> str:
         """闲聊，接入 ChatGPT
