@@ -43,7 +43,7 @@ class ARKBot(BaseBot):
             logging.info(f'model messages:{self.conversation_list[wxid]}')
             ret = self.client.chat.completions.create(model=self.model,
                                                       messages=self.conversation_list[wxid],
-                                                      temperature=1.2)
+                                                      temperature=1)
             rsp = ret.choices[0].message.content
             rsp = rsp[2:] if rsp.startswith("\n\n") else rsp
             rsp = rsp.replace("\n\n", "\n")
