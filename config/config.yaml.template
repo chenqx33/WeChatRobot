@@ -54,6 +54,9 @@ coze:
   coze_api_token:
 
 ark:
-  api: https://ark.cn-beijing.volces.com/api/v3/chat/completions
-  model: deepseek-r1-250120
+  # api: https://ark.cn-beijing.volces.com/api/v3/chat/completions
+  # model: deepseek-r1-250120
+  api: https://ark.cn-beijing.volces.com/api/v3/bots/chat/completions
+  model: bot-20250325161333-cmqxf
   prompt: 你是智能聊天机器人，你叫 wcferry，你的创造者是Tyler  # 根据需要对角色进行设定
+
